@@ -58,7 +58,6 @@ public class WriteFile implements Tool<Payload, Payload> {
                 boolean isCreated = tmp.mkdir();
                 if (isCreated) {
                     System.out.println("New directory created. Name: " + tmp.getName());
-                    break;
                 }
             }
         }
