@@ -1,0 +1,5 @@
+agent:
+  openai:
+    base-url: https://api.openai.com/v1/responses
+    model: gpt-5.3-codex
+    api-key: ${OPENAI_API_KEY:}
