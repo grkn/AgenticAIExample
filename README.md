@@ -188,6 +188,6 @@ This repository is a compact reference implementation for building a **tool-usin
 
 ## New Implementations with Date
 
-- 21.03.2026: JavaFX is implemented by itself
+- 21.03.2026: JavaFX is implemented by itself. It took 2 minutes to implement and bind necessary actions.
 
 <img width="865" height="792" alt="image" src="https://github.com/user-attachments/assets/b054acc7-e0bd-4945-96d2-768b72b46c42" />
