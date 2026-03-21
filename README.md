@@ -1,118 +1,84 @@
-# Agents-HITL
+# Agentic AI Example
 
-A Spring Boot based **multi-agent repository** that demonstrates two practical AI agents:
-- **Developer Agent**: plans and executes engineering tasks using tools on a local codebase
-- **Product Owner Agent**: decomposes product requests into clear, implementable sub-problems
+This repository is a **Spring Boot multi-module project** that demonstrates AI agent workflows in a practical and readable way.
 
-This project is designed for **Human-in-the-Loop (HITL)** workflows, where agents can work autonomously but still ask for clarification when needed.
+It currently includes:
+- **Developer Agent**: helps perform engineering tasks in a code repository using tools
+- **Product Owner Agent**: turns high-level product ideas into clear, actionable sub-problems
+- **Architect Agent**: supports architecture-related analysis and prompt modes
 
----
-
-## What this repository contains
-
-This is a multi-module Maven project:
-- **Root module (`agents`)**: aggregator `pom`
-- **`developer` module**: implementation of the Developer Agent orchestrator + tool execution
-- **`productowner` module**: implementation of the Product Owner Agent for requirement decomposition
-
-Key technologies:
-- Java 21
-- Spring Boot 3.5.0
-- Jackson
-- Java `HttpClient` for OpenAI API integration
+The project is built for **Human-in-the-Loop (HITL)** usage: agents can work step-by-step and ask for human input when needed.
 
 ---
 
-## Developer Agent (developer module)
+## Project modules
 
-The Developer Agent is responsible for turning a coding goal into concrete repository actions.
+At the root, this is a Maven aggregator project (`pom.xml`) with these modules:
 
-### What it does
-1. Understands the engineering goal and repository path
-2. Plans the next action with LLM support
-3. Executes one tool at a time (LIST, READ, SEARCH, WRITE, REPLACE, MAVEN COMPILE)
-4. Feeds tool output back into planning context
-5. Repeats until completed or blocked
-6. Produces a final answer and run summary
+- `developer`
+  - Orchestrates coding tasks
+  - Uses tools like list/read/write/replace/search/compile
 
-### Main components
-- `Application`
-  - Boots Spring context and can start an interactive HITL run
+- `productowner`
+  - Decomposes product requirements
+  - Produces structured requirement breakdowns
 
-- `DeveloperAgentOrchestrator`
-  - Core execution loop controller
-  - Tracks observations, tool history, and modified files
+- `architect`
+  - Handles architecture-oriented prompting and responses
+  - Supports different architecture prompt modes
 
-- `PlannerService`
-  - Builds prompt and requests the next strict JSON action
+---
 
-- `LlmClient`
-  - Calls OpenAI Responses API
+## Tech stack
 
-- `CriticService`
-  - Performs final quality review
+- **Java 21**
+- **Spring Boot 3.5.0**
+- **Maven**
+- **Jackson**
+- Java `HttpClient` (for OpenAI API communication)
 
-- `tools/*`
-  - `ListFile`, `ReadFile`, `SearchPatternInFile`, `WriteFile`, `ReplaceFile`, `RunMavenCompileTool`
+---
 
-### Developer Agent outcomes
-`AgentResult.outcome`:
+## How the Developer Agent works (simple view)
+
+1. Reads a task goal and repository path
+2. Chooses the next action
+3. Runs one tool at a time (LIST, READ, SEARCH, WRITE, REPLACE, MAVEN COMPILE)
+4. Reviews tool output
+5. Repeats until done or blocked
+
+Possible outcomes:
 - `COMPLETED`
 - `NEEDS_HUMAN_INPUT`
 - `STOPPED_MAX_STEPS`
 
 ---
 
-## Product Owner Agent (productowner module)
+## How the Product Owner Agent works (simple view)
 
-The Product Owner Agent focuses on **requirement analysis**.
-
-### What it does
-1. Takes a high-level product request
-2. Breaks it into smaller, meaningful sub-problems
-3. Returns structured outputs that can be consumed by developers/agents
-
-### Main components
-- `ProductOwner`
-  - Entry point for running PO workflows
-
-- `ProductOwnerAgent`
-  - Agent contract/interface
-
-- `DefaultProductOwnerAgent`
-  - Default implementation that performs request decomposition
-
-- `SubProblem`
-  - Model representing each decomposed requirement item
-
-- `LlmClient`
-  - OpenAI API communication for product reasoning
-
-This module helps translate product intent into actionable work items before development starts.
+1. Takes a product/problem statement
+2. Breaks it into smaller, meaningful work items
+3. Returns structured sub-problems that development can implement
 
 ---
 
-## Project structure
+## Basic folder layout
 
 ```
-Agents-HITL/
+AgenticAIExample/
   pom.xml
+  README.md
+  architect/
+    pom.xml
+    src/main/java/...
+    src/main/resources/application.yaml
   developer/
     pom.xml
-    src/main/java/com/grkn/agents/
-      Application.java
-      core/
-      tools/
-      config/
-      properties/
+    src/main/java/...
     src/main/resources/application.yaml
   productowner/
     pom.xml
-    src/main/java/com/grkn/agents/
-      ProductOwner.java
-      core/
-      config/
-      properties/
+    src/main/java/...
     src/main/resources/application.yaml
 ```
 
@@ -120,10 +86,10 @@ Agents-HITL/
 
 ## Configuration
 
-Both modules use `application.yaml` with OpenAI settings:
+Each module has an `application.yaml` with OpenAI-related settings such as:
 - `agent.openai.base-url`
 - `agent.openai.model`
-- `agent.openai.api-key` (from `OPENAI_API_KEY`)
+- `agent.openai.api-key`
 
 Set API key (PowerShell):
 
@@ -133,7 +99,7 @@ $env:OPENAI_API_KEY = "your-api-key"
 
 ---
 
-## Build and run
+## Build
 
 From repository root:
 
@@ -141,15 +107,21 @@ From repository root:
 mvn clean compile
 ```
 
-Run Developer Agent from IDE via `Application.main()` (developer module).
-Run Product Owner Agent from IDE via `ProductOwner.main()` (productowner module).
+---
+
+## Run
+
+Run main classes from your IDE:
+- Developer Agent: `developer -> Application.main()`
+- Product Owner Agent: `productowner -> ProductOwner.main()`
+- Architect Agent: `architect -> SoftwareArchitect.main()` (if configured in your environment)
 
 ---
 
-## New implementations
+## Recent updates
 
-- **21.03.2026**: JavaFX UI added and bound to agent actions.
-- **21.03.2026**: Product Owner Agent implemented and tested by Developer Agent.
+- JavaFX UI support added and connected with agent actions
+- Product Owner Agent implemented and tested by Developer Agent
 
 <img width="865" height="792" alt="image" src="https://github.com/user-attachments/assets/b054acc7-e0bd-4945-96d2-768b72b46c42" />
 
