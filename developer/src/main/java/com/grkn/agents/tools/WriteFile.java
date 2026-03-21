@@ -52,7 +52,7 @@ public class WriteFile implements Tool<Payload, Payload> {
             path = path.getParent();
         }
 
-        for (int i = possiblePaths.size() - 1; i >=0 ; i--) {
+        for (int i = possiblePaths.size() - 1; i >=1 ; i--) {
             File tmp = new File(possiblePaths.get(i));
             if (!tmp.exists()) {
                 boolean isCreated = tmp.mkdir();
