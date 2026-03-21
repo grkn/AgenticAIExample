@@ -18,6 +18,7 @@
     <modules>
         <module>developer</module>
         <module>productowner</module>
+        <module>architect</module>
     </modules>
 
     <properties>

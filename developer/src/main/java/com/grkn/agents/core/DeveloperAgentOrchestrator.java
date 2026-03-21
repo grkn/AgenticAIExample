@@ -30,7 +30,7 @@ public class DeveloperAgentOrchestrator {
         state.setRepoPath(repoPath);
         state.setGoal(goal);
 
-        int maxSteps = 15;
+        int maxSteps = 50;
         Payload payload = new Payload();
         for (int i = 0; i < maxSteps && !state.isFinished(); i++) {
             PlannerDecision decision = plannerService.decideNextStep(state, toolRegistry.describeTools(), payload);
