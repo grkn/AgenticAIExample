@@ -186,7 +186,7 @@ This repository is a compact reference implementation for building a **tool-usin
 - post-run critique and traceability.
 
 
-## New Implementations with DateTime
+## New Implementations with Date
 
 - 21.03.2026: JavaFX is implemented by itself
 
