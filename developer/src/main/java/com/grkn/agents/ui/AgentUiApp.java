@@ -96,7 +96,7 @@ public class AgentUiApp extends Application {
             }
 
 
-            finalAnswerArea.setText(result.getFinalAnswer());
+            finalAnswerArea.setText("Outcome: " + result.getOutcome() + "\n" + result.getFinalAnswer());
             criticsArea.setText(result.getObservations().get(result.getObservations().size() - 1));
         });
     }

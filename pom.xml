@@ -17,6 +17,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>developer</module>
+        <module>productowner</module>
     </modules>
 
     <properties>

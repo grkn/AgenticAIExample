@@ -117,7 +117,7 @@ mvn clean compile
 Run application (module `developer`):
 
 ```bash
-mvn -pl developer exec:java -Dexec.mainClass=com.grkn.agents.Application
+mvn -pl developer exec:java -Dexec.mainClass=com.grkn.agents.ProductOwner
 ```
 
 (Or run `Application.main()` directly from IDE.)
