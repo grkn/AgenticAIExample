@@ -25,7 +25,9 @@ public class RunMavenCompileTool implements Tool<Payload, Payload> {
 
     @Override
     public Payload execute(Payload payload){
-        ProcessBuilder pb = new ProcessBuilder("mvn", "compile");
+        String os = System.getProperty("os.name").toLowerCase();
+        String mvnCommand = os.contains("win") ? "mvn.cmd" : "mvn";
+        ProcessBuilder pb = new ProcessBuilder(mvnCommand, "compile");
         pb.directory(new java.io.File(payload.getRootPath()));
         pb.redirectErrorStream(true);
         StringBuilder output = new StringBuilder();
