@@ -1,12 +1,10 @@
 # Agents-HITL
 
-A Spring Boot based **Developer Agent Orchestrator** that uses an LLM to iteratively plan and execute engineering tasks over a local repository using a constrained toolset (LIST, READ, SEARCH, WRITE, REPLACE, MAVEN COMPILE).
+A Spring Boot based **multi-agent repository** that demonstrates two practical AI agents:
+- **Developer Agent**: plans and executes engineering tasks using tools on a local codebase
+- **Product Owner Agent**: decomposes product requests into clear, implementable sub-problems
 
-This project demonstrates a practical **Human-in-the-Loop (HITL)** software agent flow where the model can:
-- inspect a codebase,
-- make targeted file changes,
-- validate via compilation,
-- ask for human input when blocked.
+This project is designed for **Human-in-the-Loop (HITL)** workflows, where agents can work autonomously but still ask for clarification when needed.
 
 ---
 
@@ -14,7 +12,8 @@ This project demonstrates a practical **Human-in-the-Loop (HITL)** software agen
 
 This is a multi-module Maven project:
 - **Root module (`agents`)**: aggregator `pom`
-- **`developer` module**: main implementation of the planning/execution agent
+- **`developer` module**: implementation of the Developer Agent orchestrator + tool execution
+- **`productowner` module**: implementation of the Product Owner Agent for requirement decomposition
 
 Key technologies:
 - Java 21
@@ -24,48 +23,72 @@ Key technologies:
 
 ---
 
-## High-level architecture
+## Developer Agent (developer module)
 
-Core flow is implemented in `DeveloperAgentOrchestrator`:
+The Developer Agent is responsible for turning a coding goal into concrete repository actions.
 
-1. Build initial `AgentState` with repository path + task goal.
-2. Ask `PlannerService` for the **next JSON action**.
-3. If action is `RUN_TOOL`, execute a registered tool from `ToolRegistry`.
-4. Feed tool output back into planner context (payload chaining).
-5. Repeat until one of:
-   - `FINAL_ANSWER` (completed),
-   - `ASK_HUMAN` (needs input),
-   - max steps reached.
-6. On completion, run `CriticService` for a final self-review.
+### What it does
+1. Understands the engineering goal and repository path
+2. Plans the next action with LLM support
+3. Executes one tool at a time (LIST, READ, SEARCH, WRITE, REPLACE, MAVEN COMPILE)
+4. Feeds tool output back into planning context
+5. Repeats until completed or blocked
+6. Produces a final answer and run summary
 
 ### Main components
-
 - `Application`
-  - Bootstraps Spring context and starts a sample run from `main`.
-  - Includes simple terminal loop for HITL when outcome is `NEEDS_HUMAN_INPUT`.
+  - Boots Spring context and can start an interactive HITL run
 
 - `DeveloperAgentOrchestrator`
-  - Execution loop controller.
-  - Maintains tool history, observations, modified files, and final result.
+  - Core execution loop controller
+  - Tracks observations, tool history, and modified files
 
 - `PlannerService`
-  - Builds the prompt containing task, repository path, tool descriptions, constraints, and current payload.
-  - Calls `LlmClient` and maps model output into `PlannerDecision`.
+  - Builds prompt and requests the next strict JSON action
 
 - `LlmClient`
-  - Calls OpenAI Responses API.
-  - Sends prompt as `input`, keeps `previous_response_id` to continue conversation across steps.
+  - Calls OpenAI Responses API
 
 - `CriticService`
-  - Performs final quality review of the generated answer and observations.
+  - Performs final quality review
 
-- Tool implementations (`com.grkn.agents.tools`)
-  - `ListFile`
-  - `ReadFile`
-  - `SearchPatternInFile`
-  - `WriteFile`
-  - `ReplaceFile`
-  - `RunMavenCompileTool`
+- `tools/*`
+  - `ListFile`, `ReadFile`, `SearchPatternInFile`, `WriteFile`, `ReplaceFile`, `RunMavenCompileTool`
+
+### Developer Agent outcomes
+`AgentResult.outcome`:
+- `COMPLETED`
+- `NEEDS_HUMAN_INPUT`
+- `STOPPED_MAX_STEPS`
+
+---
+
+## Product Owner Agent (productowner module)
+
+The Product Owner Agent focuses on **requirement analysis**.
+
+### What it does
+1. Takes a high-level product request
+2. Breaks it into smaller, meaningful sub-problems
+3. Returns structured outputs that can be consumed by developers/agents
+
+### Main components
+- `ProductOwner`
+  - Entry point for running PO workflows
+
+- `ProductOwnerAgent`
+  - Agent contract/interface
+
+- `DefaultProductOwnerAgent`
+  - Default implementation that performs request decomposition
+
+- `SubProblem`
+  - Model representing each decomposed requirement item
+
+- `LlmClient`
+  - OpenAI API communication for product reasoning
+
+This module helps translate product intent into actionable work items before development starts.
 
 ---
 
@@ -73,32 +96,36 @@ Core flow is implemented in `DeveloperAgentOrchestrator`:
 
 ```
 Agents-HITL/
-  pom.xml                     # Root aggregator pom
+  pom.xml
   developer/
-    pom.xml                   # Spring Boot module
+    pom.xml
     src/main/java/com/grkn/agents/
       Application.java
+      core/
+      tools/
       config/
-      core/                   # Orchestration + planner + critic + models
-      properties/             # @ConfigurationProperties classes
-      tools/                  # Tool contracts + implementations
-    src/main/resources/
-      application.yaml
+      properties/
+    src/main/resources/application.yaml
+  productowner/
+    pom.xml
+    src/main/java/com/grkn/agents/
+      ProductOwner.java
+      core/
+      config/
+      properties/
+    src/main/resources/application.yaml
 ```
 
 ---
 
 ## Configuration
 
-`developer/src/main/resources/application.yaml` contains:
+Both modules use `application.yaml` with OpenAI settings:
+- `agent.openai.base-url`
+- `agent.openai.model`
+- `agent.openai.api-key` (from `OPENAI_API_KEY`)
 
-- `agent.openai.base-url` (default: `https://api.openai.com/v1/responses`)
-- `agent.openai.model` (currently `gpt-5.3-codex`)
-- `agent.openai.api-key` from `OPENAI_API_KEY` env var
-
-> Important: Use environment variable `OPENAI_API_KEY` in real usage.
-
-Example (PowerShell):
+Set API key (PowerShell):
 
 ```powershell
 $env:OPENAI_API_KEY = "your-api-key"
@@ -114,84 +141,16 @@ From repository root:
 mvn clean compile
 ```
 
-Run application (module `developer`):
-
-```bash
-mvn -pl developer exec:java -Dexec.mainClass=com.grkn.agents.ProductOwner
-```
-
-(Or run `Application.main()` directly from IDE.)
+Run Developer Agent from IDE via `Application.main()` (developer module).
+Run Product Owner Agent from IDE via `ProductOwner.main()` (productowner module).
 
 ---
 
-## How the agent decides actions
+## New implementations
 
-Planner outputs strict JSON with these fields:
-- `action` (`RUN_TOOL` or `ASK_HUMAN`)
-- `toolName`
-- `toolInput` (JSON string)
-- `reasoning`
-- `finalAnswer`
-- `toolOutput` (JSON string from previous step)
-
-The orchestrator then:
-- deserializes `toolInput` into `Payload`,
-- executes corresponding tool,
-- serializes output back into planner memory for next step.
-
-This creates a controlled, auditable agent loop.
-
----
-
-## Notes for developers
-
-1. **Security**
-   - Never commit real API keys.
-   - Ensure `application.yaml` uses env interpolation only.
-
-2. **Paths in `Application`**
-   - Current `main` contains a hard-coded Windows path for local testing.
-   - Consider externalizing it (args/config) for portability.
-
-3. **Prompt contract is critical**
-   - `PlannerService` expects strict JSON schema from the model.
-   - Any schema drift can break deserialization into `PlannerDecision`.
-
-4. **Tooling extension**
-   - Add new tool implementation under `tools/` and register it in `ToolRegistry`.
-   - Keep tool I/O aligned with `Payload`.
-
----
-
-## Typical execution outcomes
-
-`AgentResult.outcome` can be:
-- `COMPLETED`
-- `NEEDS_HUMAN_INPUT`
-- `STOPPED_MAX_STEPS`
-
-Alongside:
-- `finalAnswer`
-- `modifiedFiles`
-- `observations`
-
----
-
-## Why this project is useful
-
-This repository is a compact reference implementation for building a **tool-using coding agent** in Java/Spring with:
-- deterministic tool boundaries,
-- iterative planning,
-- optional human intervention,
-- post-run critique and traceability.
-
-
-## New Implementations with Date
-
-- 21.03.2026: JavaFX is implemented by itself. It took 2 minutes to implement and bind necessary actions.
+- **21.03.2026**: JavaFX UI added and bound to agent actions.
+- **21.03.2026**: Product Owner Agent implemented and tested by Developer Agent.
 
 <img width="865" height="792" alt="image" src="https://github.com/user-attachments/assets/b054acc7-e0bd-4945-96d2-768b72b46c42" />
-
-- 21.03.2026: ProductOwner agent implemented by developer agent. It took 5 minutes to implement and test it.
 
 <img width="1278" height="821" alt="image" src="https://github.com/user-attachments/assets/5b212445-fa3a-4660-b427-ac040c43533b" />
