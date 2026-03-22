@@ -19,6 +19,8 @@
         <module>developer</module>
         <module>productowner</module>
         <module>architect</module>
+        <module>orchestrator</module>
+        <module>tester</module>
     </modules>
 
     <properties>
