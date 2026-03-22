@@ -122,6 +122,7 @@ Run main classes from your IDE:
 
 - JavaFX UI support added and connected with agent actions
 - Product Owner Agent implemented and tested by Developer Agent
+- Software Architect implemented and tested by Developer Agent
 
 <img width="865" height="792" alt="image" src="https://github.com/user-attachments/assets/b054acc7-e0bd-4945-96d2-768b72b46c42" />
 
