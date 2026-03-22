@@ -20,7 +20,7 @@ public class ArchitectAgentService {
         this.validator = validator;
     }
 
-    public ArchitectureResponse generateArchitecture(ArchitectureRequest request) {
+    public ArchitectureResponse generateArchitecture(ArchitectureRequest request) throws Exception {
         String prompt = promptBuilder.build(request);
         String architecture = llmClient.generate(prompt);
         Validator.ValidationResult validationResult = validator.validate(architecture);

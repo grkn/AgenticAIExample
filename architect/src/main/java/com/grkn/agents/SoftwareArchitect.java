@@ -1,6 +1,6 @@
 package com.grkn.agents;
 
-import com.grkn.agents.properties.ArchitectProperties;
+import com.grkn.agents.properties.OpenAiProperties;
 import com.grkn.agents.resource.ArchitectureRequest;
 import com.grkn.agents.resource.ArchitectureResponse;
 import com.grkn.agents.service.ArchitectAgent;
@@ -13,9 +13,9 @@ import org.springframework.context.annotation.PropertySource;
 
 @ComponentScan(value = "com.grkn.agents")
 @PropertySource("classpath:application.yaml")
-@EnableConfigurationProperties(ArchitectProperties.class)
+@EnableConfigurationProperties(OpenAiProperties.class)
 public class SoftwareArchitect {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         AnnotationConfigApplicationContext context =
                 new AnnotationConfigApplicationContext(SoftwareArchitect.class);
 
@@ -27,6 +27,5 @@ public class SoftwareArchitect {
                         ArchitectureMode.DEFAULT
                 );
         ArchitectureResponse response = architectAgent.run(architectureRequest);
-        context.getBean(Validator.class).validate(response.architecture());
     }
 }

@@ -13,7 +13,7 @@ public class ArchitectAgent {
         this.architectAgentService = architectAgentService;
     }
 
-    public ArchitectureResponse run(ArchitectureRequest request) {
+    public ArchitectureResponse run(ArchitectureRequest request) throws Exception {
         return architectAgentService.generateArchitecture(request);
     }
 }

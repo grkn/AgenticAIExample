@@ -1,53 +1,70 @@
 package com.grkn.agents.core;
 
-import com.grkn.agents.properties.ArchitectProperties;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.grkn.agents.properties.OpenAiProperties;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
 
-import java.util.List;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
 public class OpenAiLlmClient implements LlmClient {
 
-    private final RestClient restClient;
-    private final ArchitectProperties properties;
+    private final OpenAiProperties openAiProperties;
+    private final ObjectMapper objectMapper;
+    private final HttpClient httpClient;
+    private String responseId;
 
-    public OpenAiLlmClient(RestClient.Builder restClientBuilder, ArchitectProperties properties) {
-        this.restClient = restClientBuilder.baseUrl(properties.getBaseUrl()).build();
-        this.properties = properties;
+    public OpenAiLlmClient(OpenAiProperties openAiProperties, ObjectMapper objectMapper) {
+        this.openAiProperties = openAiProperties;
+        this.objectMapper = objectMapper;
+        this.httpClient = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(20))
+                .build();
     }
 
-    @Override
-    public String generate(String prompt) {
-        Map<String, Object> payload = Map.of(
-                "model", properties.getModel(),
-                "messages", List.of(Map.of("role", "user", "content", prompt))
-        );
-
-        OpenAiChatResponse response = restClient.post()
-                .uri("/chat/completions")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + properties.getApiKey())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(payload)
-                .retrieve()
-                .body(OpenAiChatResponse.class);
-
-        if (response == null || response.choices() == null || response.choices().isEmpty()) {
-            throw new IllegalStateException("Empty response from OpenAI");
+    public String generate(String prompt) throws Exception {
+        if (openAiProperties.getApiKey() == null || openAiProperties.getApiKey().isBlank()) {
+            throw new IllegalStateException("OPENAI_API_KEY is not configured.");
         }
 
-        return response.choices().get(0).message().content();
-    }
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("model", openAiProperties.getModel());
+        payload.put("input", prompt);
+        if (responseId != null) {
+            payload.put("previous_response_id", responseId);
+        }
 
-    private record OpenAiChatResponse(List<Choice> choices) {
-    }
+        String requestBody = objectMapper.writeValueAsString(payload);
 
-    private record Choice(Message message) {
-    }
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(openAiProperties.getBaseUrl()))
+                .timeout(Duration.ofSeconds(120))
+                .header("Authorization", "Bearer " + openAiProperties.getApiKey())
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
 
-    private record Message(String content) {
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() >= 400) {
+            throw new IllegalStateException("LLM call failed: HTTP " + response.statusCode() + " -> " + response.body());
+        }
+
+        JsonNode root = objectMapper.readTree(response.body());
+        responseId = root.path("id").asText();
+
+        JsonNode output = root.path("output");
+        if (!output.isArray() || output.isEmpty()) {
+            throw new IllegalStateException("LLM response missing output: " + response.body());
+        }
+
+        return output.get(output.size() - 1).path("content").get(0).path("text").asText();
     }
 }

@@ -2,8 +2,6 @@ package com.grkn.agents;
 
 import com.grkn.agents.core.ProductOwnerAgent;
 import com.grkn.agents.resource.SubProblem;
-import com.grkn.agents.properties.OpenAiProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
@@ -16,7 +14,6 @@ import java.util.ListIterator;
 
 @ComponentScan(value = "com.grkn.agents")
 @PropertySource("classpath:application.yaml")
-@EnableConfigurationProperties(OpenAiProperties.class)
 public class ProductOwner {
 
     public static void main(String[] args) {
@@ -28,7 +25,7 @@ public class ProductOwner {
             String clarifiedProblem = productOwnerAgent.clarifyProblem("You have an customer and customer needs a authentication and authorization to login");
             List<SubProblem> subProblems = productOwnerAgent.splitIntoSubProblems(clarifiedProblem);
             // Important divide requirements according to divisionFactorForSubproblems so it is detailed.
-            int divisionFactorForProblems = 2;
+            int divisionFactorForProblems = 1;
             int i = 0;
 
             while (i < divisionFactorForProblems) {

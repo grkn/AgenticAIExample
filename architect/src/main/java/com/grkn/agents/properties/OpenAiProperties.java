@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ArchitectProperties {
+public class OpenAiProperties {
 
     @Value("${llm.openai.api-key}")
     private String apiKey;
