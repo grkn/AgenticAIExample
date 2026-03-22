@@ -1,7 +1,7 @@
 package com.grkn.agents;
 
 import com.grkn.agents.core.ProductOwnerAgent;
-import com.grkn.agents.core.SubProblem;
+import com.grkn.agents.resource.SubProblem;
 import com.grkn.agents.properties.OpenAiProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

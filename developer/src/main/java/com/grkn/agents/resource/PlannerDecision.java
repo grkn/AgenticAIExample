@@ -1,6 +1,5 @@
-package com.grkn.agents.core;
+package com.grkn.agents.resource;
 
-import com.grkn.agents.tools.Payload;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

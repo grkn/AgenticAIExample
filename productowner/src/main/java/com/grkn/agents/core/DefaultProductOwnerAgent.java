@@ -2,6 +2,7 @@ package com.grkn.agents.core;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.grkn.agents.resource.SubProblem;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

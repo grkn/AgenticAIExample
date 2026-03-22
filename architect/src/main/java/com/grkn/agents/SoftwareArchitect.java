@@ -1,7 +1,11 @@
 package com.grkn.agents;
 
-import com.grkn.agents.core.*;
 import com.grkn.agents.properties.ArchitectProperties;
+import com.grkn.agents.resource.ArchitectureRequest;
+import com.grkn.agents.resource.ArchitectureResponse;
+import com.grkn.agents.service.ArchitectAgent;
+import com.grkn.agents.type.ArchitectureMode;
+import com.grkn.agents.validation.Validator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;

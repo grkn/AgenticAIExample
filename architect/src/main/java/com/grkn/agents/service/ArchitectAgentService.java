@@ -1,5 +1,10 @@
-package com.grkn.agents.core;
+package com.grkn.agents.service;
 
+import com.grkn.agents.core.LlmClient;
+import com.grkn.agents.core.PromptBuilder;
+import com.grkn.agents.validation.Validator;
+import com.grkn.agents.resource.ArchitectureRequest;
+import com.grkn.agents.resource.ArchitectureResponse;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,4 +1,4 @@
-package com.grkn.agents.core;
+package com.grkn.agents.resource;
 
 public class SubProblem {
 

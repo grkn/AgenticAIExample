@@ -1,5 +1,7 @@
 package com.grkn.agents.core;
 
+import com.grkn.agents.resource.SubProblem;
+
 import java.util.List;
 
 public interface ProductOwnerAgent {

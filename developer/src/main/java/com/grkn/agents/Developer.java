@@ -9,7 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 @ComponentScan(value = "com.grkn.agents")
 @PropertySource("classpath:application.yaml")
 @EnableConfigurationProperties(OpenAiProperties.class)
-public class Application {
+public class Developer {
 
     public static void main(String[] args) {
         AgentUiApp.main(args);

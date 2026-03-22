@@ -1,5 +1,7 @@
 package com.grkn.agents.core;
 
+import com.grkn.agents.resource.ArchitectureRequest;
+import com.grkn.agents.type.ArchitectureMode;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;

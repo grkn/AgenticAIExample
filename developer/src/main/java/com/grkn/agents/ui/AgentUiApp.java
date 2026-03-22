@@ -1,6 +1,7 @@
 package com.grkn.agents.ui;
 
-import com.grkn.agents.core.AgentResult;
+import com.grkn.agents.Developer;
+import com.grkn.agents.resource.AgentResult;
 import com.grkn.agents.core.DeveloperAgentOrchestrator;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -85,7 +86,7 @@ public class AgentUiApp extends Application {
 
         executeButton.setOnAction(actionEvent -> {
             AnnotationConfigApplicationContext context =
-                    new AnnotationConfigApplicationContext(com.grkn.agents.Application.class);
+                    new AnnotationConfigApplicationContext(Developer.class);
 
             DeveloperAgentOrchestrator service = context.getBean(DeveloperAgentOrchestrator.class);
             AgentResult result = null;

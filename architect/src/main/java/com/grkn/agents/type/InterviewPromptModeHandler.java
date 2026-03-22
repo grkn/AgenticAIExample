@@ -1,5 +1,6 @@
-package com.grkn.agents.core;
+package com.grkn.agents.type;
 
+import com.grkn.agents.core.PromptModeHandler;
 import org.springframework.stereotype.Component;
 
 @Component

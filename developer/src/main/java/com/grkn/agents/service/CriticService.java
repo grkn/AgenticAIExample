@@ -1,5 +1,6 @@
-package com.grkn.agents.core;
+package com.grkn.agents.service;
 
+import com.grkn.agents.core.LlmClient;
 import org.springframework.stereotype.Service;
 
 @Service
