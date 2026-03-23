@@ -16,7 +16,7 @@ public class Payload {
     public String filePath;
     public String newContent;
     public String rootPath;
-    public String resultOfSearch;
+    public String result;
     public String mvnResult;
     public String searchPattern;
 }

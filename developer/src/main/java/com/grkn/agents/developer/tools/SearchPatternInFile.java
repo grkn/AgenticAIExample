@@ -16,7 +16,7 @@ public class SearchPatternInFile implements Tool<Payload, Payload> {
     public String description() {
         return """
                 
-                Purpose: Searches for a text pattern in repository files that return file's path which includes pattern.
+                Purpose: Searches for a regex text pattern in repository files that return file's path which includes pattern.
                 
                 Format must be json.
                 

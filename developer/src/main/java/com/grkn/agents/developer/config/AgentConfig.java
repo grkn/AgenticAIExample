@@ -2,6 +2,7 @@ package com.grkn.agents.developer.config;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grkn.agents.developer.properties.OpenAiProperties;
 import com.grkn.agents.developer.tools.*;
@@ -23,7 +24,8 @@ public class AgentConfig {
                 new SearchPatternInFile(),
                 new WriteFile(),
                 new ReplaceFile(),
-                new RunMavenCompileTool()
+                new RunMavenCompileTool(),
+                new DeleteFile()
         );
         return new ToolRegistry(tools);
     }
@@ -31,9 +33,8 @@ public class AgentConfig {
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enable(JsonGenerator.Feature.ESCAPE_NON_ASCII);
-        objectMapper.enable(JsonGenerator.Feature.QUOTE_FIELD_NAMES);
         objectMapper.enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES);
+        objectMapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
         return objectMapper;
     }
 }

@@ -30,12 +30,13 @@ public class DeveloperAgentOrchestrator {
         this.objectMapper = objectMapper;
     }
 
-    public AgentResult run(String repoPath, String goal) throws Exception {
+    public AgentResult run(String repoPath, String goal, String architecture) throws Exception {
         AgentState state = new AgentState();
         state.setRepoPath(repoPath);
         state.setGoal(goal);
+        state.setArchitecturalDecision(architecture);
 
-        int maxSteps = 50;
+        int maxSteps = 15;
         Payload payload = new Payload();
         for (int i = 0; i < maxSteps && !state.isFinished(); i++) {
             PlannerDecision decision = plannerService.decideNextStep(state, toolRegistry.describeTools(), payload);

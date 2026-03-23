@@ -33,6 +33,10 @@ public class PlannerService {
                 Available tools:
                 %s
                 
+                Architectural Decision:
+                Follow architectural overview and architectural components as much as possible to make a technical decision.
+                %s
+                
                 Basic options to operate:
                 
                 You can use available tools to operate. Descriptions to operate are below:
@@ -64,14 +68,14 @@ public class PlannerService {
                     "filePath": "current selected file's absolute path"
                     "newContent": "new content of selected file that needs to be replaced"
                     "rootPath": "repository's absolute path"
-                    "resultOfSearch": "contains result of search operation as file names"
+                    "result": "contains result of search operation as file names or delete operation result"
                     "mvnResult": "result of running 'mvn compile' in the repository"
                     "searchPattern": "to search pattern's string value which return absolute paths contains pattern"
                 }
                 
                 Final Result JSON shape:
                 {
-                  "action": "RUN_TOOL or ASK_HUMAN",
+                  "action": "RUN_TOOL or ASK_HUMAN or FINAL_ANSWER",
                   "toolName": "tool name or empty string",
                   "toolInput": "tool input which is json as string or empty json object as string",
                   "reasoning": "brief explanation",
@@ -85,6 +89,7 @@ public class PlannerService {
                 state.getRepoPath(),
                 state.getGoal(),
                 toolDescriptions,
+                state.getArchitecturalDecision(),
                 objectMapper.writeValueAsString(payload)
         );
 

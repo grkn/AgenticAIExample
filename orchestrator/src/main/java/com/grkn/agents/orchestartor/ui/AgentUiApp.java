@@ -110,7 +110,9 @@ public class AgentUiApp extends Application {
                 ProductOwnerAgent productOwnerAgent = productOwnerContext.getBean(ProductOwnerAgent.class);
                 String clarifiedProblem = productOwnerAgent.clarifyProblem(goalArea.getText());
                 List<SubProblem> subProblems = productOwnerAgent.splitIntoSubProblems(clarifiedProblem);
+
                 // Important divide requirements according to divisionFactorForSubproblems so it is detailed.
+                /*
                 int divisionFactorForProblems = 1;
                 int i = 0;
 
@@ -130,6 +132,8 @@ public class AgentUiApp extends Application {
                     subProblems.addAll(newSubProblems);
                     i++;
                 }
+                */
+
                 String requirementsDocument = productOwnerAgent.buildRequirementsDocument(clarifiedProblem, subProblems, List.of());
 
                 // Architect will review requirementsDocument and give output of technical details.
@@ -150,9 +154,7 @@ public class AgentUiApp extends Application {
                 // Developer will implement details
 
                 DeveloperAgentOrchestrator service = developerContext.getBean(DeveloperAgentOrchestrator.class);
-                AgentResult result = null;
-
-                result = service.run(repoPathField.getText(), response.architecture());
+                AgentResult result = service.run(repoPathField.getText(), goalArea.getText(), response.architecture());
                 finalAnswerArea.setText("Outcome: " + result.getOutcome() + "\n" + result.getFinalAnswer());
                 criticsArea.setText(result.getObservations().get(result.getObservations().size() - 1));
             } catch (Exception e) {

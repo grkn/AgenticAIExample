@@ -34,7 +34,7 @@ public class ListFile implements Tool<Payload, Payload>{
     public Payload execute(Payload payload) {
         Path root = Paths.get(payload.getRootPath());
         try (var stream = Files.walk(root, 10)) {
-             payload.setResultOfSearch(stream
+             payload.setResult(stream
                     .filter(Files::isRegularFile)
                     .filter(this::isRelevantFile)
                     .limit(200)

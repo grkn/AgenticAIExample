@@ -5,6 +5,7 @@ import java.util.List;
 
 public class AgentState {
     private String goal;
+    private String architecturalDecision;
     private String repoPath;
     private List<AgentTask> tasks = new ArrayList<>();
     private List<String> observations = new ArrayList<>();
@@ -75,5 +76,13 @@ public class AgentState {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public String getArchitecturalDecision() {
+        return architecturalDecision;
+    }
+
+    public void setArchitecturalDecision(String architecturalDecision) {
+        this.architecturalDecision = architecturalDecision;
     }
 }
